@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Layout Preview — MegaPrice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --font: 'Inter', -apple-system, sans-serif;
+      --white:      #FFFFFF;
+      --black:      #111111;
+      --gray-50:    #F9FAFB;
+      --gray-100:   #F3F4F6;
+      --gray-200:   #E5E7EB;
+      --gray-300:   #D1D5DB;
+      --gray-400:   #9CA3AF;
+      --gray-500:   #6B7280;
+      --gray-600:   #4B5563;
+      --gray-800:   #1F2937;
+      --gray-900:   #111827;
+      --blue-500:   #3B82F6;
+      --green-600:  #16A34A;
+      --red-600:    #DC2626;
+      --red-100:    #FEE2E2;
+      --yellow-500: #F59E0B;
+      --bg-page:    var(--gray-50);
+      --border:     var(--gray-200);
+      --text-primary:   var(--gray-900);
+      --text-secondary: var(--gray-500);
+      --text-muted:     var(--gray-400);
+      --sp-1:.25rem; --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem;
+      --sp-5:1.25rem; --sp-6:1.5rem; --sp-8:2rem;
+      --text-xs:.75rem; --text-sm:.875rem; --text-base:1rem;
+      --text-2xl:1.5rem;
+      /* radius — соответствует Tailwind rounded-sm/md */
+      --radius-sm:  0.375rem;   /* 6px  — кнопки, инпуты */
+      --radius-md:  0.5rem;     /* 8px  — карточки */
+      --radius-lg:  0.75rem;    /* 12px — dropdown */
+      --radius-full:9999px;     /* теги, аватары */
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+      --tr: 150ms ease;
+      --rail-w:    68px;
+      --panel-w:   232px;
+      --sidebar-w: calc(var(--rail-w) + var(--panel-w));
+      --header-h:  60px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { font-family: var(--font); font-size: var(--text-sm); background: var(--bg-page); color: var(--text-primary); -webkit-font-smoothing: antialiased; line-height: 1.5; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--font); cursor: pointer; }
+
+    /* ═══ APP SHELL ═══ */
+    .app { display: flex; min-height: 100vh; }
+
+    .main-area {
+      margin-left: var(--sidebar-w);
+      flex: 1; display: flex; flex-direction: column; min-height: 100vh;
+      transition: margin-left var(--tr);
+    }
+    /* Когда правая панель скрыта */
+    .app.panel-hidden .main-area { margin-left: var(--rail-w); }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar { display: flex; position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; height: 100vh; }
+
+    /* Чёрная иконочная рейка */
+    .sidebar-rail {
+      width: var(--rail-w);
+      background: var(--black);
+      display: flex; flex-direction: column; align-items: center;
+      padding: var(--sp-4) 0; gap: 2px; flex-shrink: 0;
+    }
+
+    .rail-toggle {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray-400); border: none; background: transparent;
+      border-radius: var(--radius-sm); transition: color var(--tr);
+      margin-bottom: var(--sp-3);
+    }
+    .rail-toggle:hover { color: var(--white); }
+    .rail-toggle svg { width: 1.25rem; height: 1.25rem; }
+
+    .rail-item {
+      width: 52px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: var(--sp-2) var(--sp-1);
+      border-radius: var(--radius-sm);
+      color: var(--gray-500); border: none; background: transparent;
+      transition: color var(--tr);
+    }
+    .rail-item:hover { color: var(--gray-300); }
+    .rail-item.active { color: var(--black); }
+
+    .rail-icon-wrap {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius-sm); transition: background var(--tr);
+    }
+    .rail-item.active .rail-icon-wrap { background: var(--white); }
+    .rail-item:not(.active):hover .rail-icon-wrap { background: rgba(255,255,255,.08); color: var(--white); }
+    .rail-icon-wrap svg { width: 1.125rem; height: 1.125rem; }
+
+    .rail-label { font-size: 10px; font-weight: 500; line-height: 1; color: inherit; }
+    .rail-item.active .rail-label { color: var(--gray-400); }
+
+    /* Белая панель навигации */
+    .sidebar-panel {
+      width: var(--panel-w);
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      transition: width var(--tr), opacity var(--tr);
+    }
+    .app.panel-hidden .sidebar-panel { width: 0; opacity: 0; overflow: hidden; pointer-events: none; }
+
+    .panel-logo {
+      display: flex; align-items: center; gap: var(--sp-3);
+      padding: 0 var(--sp-4);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0; height: var(--header-h);
+    }
+    .panel-logo-mark {
+      width: 32px; height: 32px; background: var(--black);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .panel-logo-mark svg { width: 18px; height: 18px; color: var(--white); }
+    .panel-logo-name { font-size: var(--text-base); font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; white-space: nowrap; }
+
+    .panel-nav { flex: 1; padding: var(--sp-4) var(--sp-3); }
+
+    .panel-section-label {
+      font-size: var(--text-xs); font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 0 var(--sp-2); margin-bottom: var(--sp-2);
+    }
+
+    .panel-item {
+      display: flex; align-items: center; gap: var(--sp-3);
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500;
+      border: none; background: transparent; width: 100%; text-align: left;
+      transition: background var(--tr), color var(--tr); cursor: pointer;
+    }
+    .panel-item:hover  { background: var(--gray-50);  color: var(--text-primary); }
+    .panel-item.active { background: var(--gray-100); color: var(--text-primary); }
+
+    .panel-item-icon { width: 1rem; height: 1rem; display: flex; align-items: center; flex-shrink: 0; }
+    .panel-item-icon svg { width: 100%; height: 100%; }
+    .panel-item-label { flex: 1; }
+
+    .panel-sub {
+      display: flex; flex-direction: column; gap: 1px;
+      margin-top: 2px;
+      padding-left: calc(var(--sp-3) + 1rem + var(--sp-3));
+    }
+    .panel-sub-item {
+      display: flex; align-items: center; gap: var(--sp-2);
+      padding: 6px var(--sp-3); border-radius: var(--radius-sm);
+      color: var(--text-secondary); font-size: var(--text-sm); font-weight: 400;
+      transition: background var(--tr), color var(--tr);
+    }
+    .panel-sub-item:hover  { background: var(--gray-50);  color: var(--text-primary); }
+    .panel-sub-item.active { background: var(--gray-100); color: var(--text-primary); font-weight: 500; }
+    .panel-sub-icon { width: .875rem; height: .875rem; display: flex; align-items: center; flex-shrink: 0; opacity: .6; }
+    .panel-sub-icon svg { width: 100%; height: 100%; }
+
+    /* ═══ HEADER ═══ */
+    .header {
+      height: var(--header-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: var(--sp-4);
+      padding: 0 var(--sp-6);
+      position: sticky; top: 0; z-index: 50; flex-shrink: 0;
+    }
+
+    /* Search — прямоугольный с мягким скруглением (не pill) */
+    .header-search {
+      flex: 1; max-width: 380px;
+      display: flex; align-items: center; gap: var(--sp-2);
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);   /* ← 6px, не pill */
+      padding: 0 var(--sp-3);
+      height: 2.25rem; cursor: text;
+      transition: border-color var(--tr), background var(--tr), box-shadow var(--tr);
+    }
+    .header-search:focus-within {
+      background: var(--white);
+      border-color: var(--blue-500);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+    .header-search-ico { color: var(--text-muted); flex-shrink: 0; display: flex; }
+    .header-search-ico svg { width: .875rem; height: .875rem; }
+    .header-search-input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: var(--font); font-size: var(--text-sm); color: var(--text-primary);
+    }
+    .header-search-input::placeholder { color: var(--text-muted); }
+    .header-search-kbd {
+      background: var(--white); border: 1px solid var(--gray-300);
+      border-radius: 4px; padding: 1px 5px;
+      font-size: 11px; color: var(--text-muted); font-weight: 500;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    .header-right { display: flex; align-items: center; gap: var(--sp-2); margin-left: auto; }
+
+    /* Язык */
+    .header-lang {
+      display: flex; align-items: center; gap: 4px;
+      height: 2rem; padding: 0 var(--sp-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--white);
+      color: var(--text-secondary); font-size: var(--text-xs); font-weight: 600;
+      letter-spacing: .04em; transition: background var(--tr), color var(--tr);
+    }
+    .header-lang:hover { background: var(--gray-50); color: var(--text-primary); }
+    .header-lang svg { width: .75rem; height: .75rem; }
+
+    /* Иконка-кнопка (нотификации) */
+    .hdr-btn {
+      position: relative; width: 2.25rem; height: 2.25rem;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--white);
+      color: var(--text-secondary);
+      transition: background var(--tr), color var(--tr);
+    }
+    .hdr-btn:hover { background: var(--gray-50); color: var(--text-primary); }
+    .hdr-btn svg { width: 1rem; height: 1rem; }
+    .hdr-dot {
+      position: absolute; top: 4px; right: 4px;
+      width: 7px; height: 7px; border-radius: 50%; border: 2px solid var(--white);
+    }
+    .hdr-dot.orange { background: var(--yellow-500); }
+
+    /* Аватар */
+    .hdr-user { position: relative; }
+    .hdr-avatar {
+      width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full);
+      background: var(--gray-200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--text-xs); font-weight: 700; color: var(--gray-600);
+      border: 2px solid var(--gray-200); cursor: pointer;
+      transition: border-color var(--tr); overflow: hidden;
+    }
+    .hdr-avatar:hover { border-color: var(--gray-400); }
+
+    /* Dropdown */
+    .user-dd {
+      display: none; position: absolute; top: calc(100% + 8px); right: 0;
+      width: 220px; background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      box-shadow: 0 8px 24px rgba(0,0,0,.10); z-index: 300; overflow: hidden;
+    }
+    .user-dd.open { display: block; }
+    .user-dd-top {
+      display: flex; align-items: center; gap: var(--sp-3);
+      padding: var(--sp-4); border-bottom: 1px solid var(--border);
+    }
+    .user-dd-avatar {
+      width: 2.5rem; height: 2.5rem; border-radius: var(--radius-full);
+      background: var(--gray-200); display: flex; align-items: center; justify-content: center;
+      font-size: var(--text-sm); font-weight: 700; color: var(--gray-600); flex-shrink: 0;
+    }
+    .user-dd-name  { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .user-dd-email { font-size: var(--text-xs); color: var(--text-muted); margin-top: 1px; }
+    .user-dd-menu { padding: var(--sp-1); }
+    .user-dd-item {
+      display: flex; align-items: center; gap: var(--sp-3);
+      padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-sm);
+      font-size: var(--text-sm); color: var(--text-secondary);
+      border: none; background: transparent; width: 100%; text-align: left;
+      transition: background var(--tr), color var(--tr);
+    }
+    .user-dd-item:hover  { background: var(--gray-50); color: var(--text-primary); }
+    .user-dd-item svg    { width: 1rem; height: 1rem; flex-shrink: 0; }
+    .user-dd-item.danger { color: var(--red-600); }
+    .user-dd-item.danger:hover { background: var(--red-100); }
+    .user-dd-sep { height: 1px; background: var(--border); margin: var(--sp-1) 0; }
+
+    /* ═══ CONTENT ═══ */
+    .content { flex: 1; padding: var(--sp-8) var(--sp-6); }
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--sp-6); }
+    .page-title { font-size: var(--text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+    .breadcrumb { display: flex; align-items: center; gap: var(--sp-2); margin-top: 4px; }
+    .bc { font-size: var(--text-sm); color: var(--text-muted); }
+    .bc-sep { color: var(--gray-300); }
+    .bc.cur { color: var(--text-primary); font-weight: 500; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: var(--sp-2);
+      height: 2.5rem; padding: 0 var(--sp-5);
+      font-family: var(--font); font-size: var(--text-sm); font-weight: 500;
+      border-radius: var(--radius-sm); border: 1px solid transparent;
+      cursor: pointer; white-space: nowrap;
+      transition: background var(--tr), border-color var(--tr);
+    }
+    .btn svg { width: 1rem; height: 1rem; }
+    .btn-primary   { background: var(--black); color: var(--white); border-color: var(--black); }
+    .btn-primary:hover { background: var(--gray-800); }
+    .btn-secondary { background: var(--white); color: var(--text-primary); border-color: var(--gray-300); }
+    .btn-secondary:hover { background: var(--gray-50); }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .stat-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1.25rem;
+    }
+    .stat-label { font-size: var(--text-xs); font-weight: 500; text-transform: uppercase; letter-spacing:.06em; color: var(--text-muted); }
+    .stat-val   { font-size: var(--text-2xl); font-weight: 700; letter-spacing:-0.02em; margin-top:.5rem; }
+    .stat-sub   { font-size: var(--text-xs); color: var(--green-600); margin-top:4px; font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <div class="sidebar">
+
+    <!-- Чёрная рейка с иконками -->
+    <nav class="sidebar-rail">
+
+      <!-- Гамбургер — скрывает/показывает правую панель -->
+      <button class="rail-toggle" onclick="togglePanel()" title="Скрыть/показать меню">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+
+      <!-- Обзор — БЕЗ подразделов → прямая навигация -->
+      <button class="rail-item active" onclick="goSection('overview', false, this)">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <span class="rail-label">Обзор</span>
+      </button>
+
+      <!-- Закупка — ЕСТЬ подразделы → открывает панель -->
+      <button class="rail-item" onclick="goSection('purchase', true, this)">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <span class="rail-label">Закупка</span>
+      </button>
+
+      <!-- Заказы — ЕСТЬ подразделы → открывает панель -->
+      <button class="rail-item" onclick="goSection('orders', true, this)">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect x="8" y="2" width="8" height="4" rx="1"/>
+          </svg>
+        </div>
+        <span class="rail-label">Заказы</span>
+      </button>
+
+      <!-- Аптеки — БЕЗ подразделов → прямая навигация -->
+      <button class="rail-item" onclick="goSection('pharmacies', false, this)">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <span class="rail-label">Аптеки</span>
+      </button>
+
+      <!-- Отчеты — БЕЗ подразделов → прямая навигация -->
+      <button class="rail-item" onclick="goSection('reports', false, this)">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6"  y1="20" x2="6"  y2="14"/>
+            <line x1="2"  y1="20" x2="22" y2="20"/>
+          </svg>
+        </div>
+        <span class="rail-label">Отчеты</span>
+      </button>
+    </nav>
+
+    <!-- Белая панель подразделов -->
+    <div class="sidebar-panel">
+      <div class="panel-logo">
+        <div class="panel-logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <span class="panel-logo-name">MegaPrice</span>
+      </div>
+
+      <!-- Закупка -->
+      <div class="panel-nav" id="nav-purchase" style="display:none">
+        <div class="panel-section-label">Закупка</div>
+        <a href="#" class="panel-item" onclick="setActive(this,event)">
+          <span class="panel-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+          <span class="panel-item-label">Вручную</span>
+        </a>
+        <a href="#" class="panel-item" onclick="setActive(this,event)">
+          <span class="panel-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
+          <span class="panel-item-label">POS</span>
+        </a>
+        <a href="#" class="panel-item" onclick="setActive(this,event)">
+          <span class="panel-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+          <span class="panel-item-label">Автоподбор</span>
+        </a>
+      </div>
+
+      <!-- Заказы -->
+      <div class="panel-nav" id="nav-orders" style="display:none">
+        <div class="panel-section-label">Заказы</div>
+        <a href="#" class="panel-item" onclick="setActive(this,event)">
+          <span class="panel-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <span class="panel-item-label">Требуют действий</span>
+        </a>
+        <a href="#" class="panel-item" onclick="setActive(this,event)">
+          <span class="panel-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          <span class="panel-item-label">В процессе</span>
+        </a>
+        <a href="#" class="panel-item" onclick="setActive(this,event)">
+          <span class="panel-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+          <span class="panel-item-label">Завершенные</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ═══ -->
+  <div class="main-area">
+
+    <!-- HEADER -->
+    <header class="header">
+      <!-- Поиск — прямоугольный, не pill -->
+      <div class="header-search" onclick="document.getElementById('srch').focus()">
+        <span class="header-search-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </span>
+        <input id="srch" class="header-search-input" type="text" placeholder="Search your page..." autocomplete="off"/>
+        <span class="header-search-kbd">⌘K</span>
+      </div>
+
+      <div class="header-right">
+        <!-- Язык -->
+        <button class="header-lang" onclick="cycleLang(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span class="lang-txt">RU</span>
+        </button>
+
+        <!-- Уведомления -->
+        <button class="hdr-btn" title="Уведомления">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="hdr-dot orange"></span>
+        </button>
+
+        <!-- Фото пользователя -->
+        <div class="hdr-user">
+          <button class="hdr-avatar" onclick="toggleDD()" title="Профиль">АД</button>
+          <div class="user-dd" id="user-dd">
+            <div class="user-dd-top">
+              <div class="user-dd-avatar">АД</div>
+              <div>
+                <div class="user-dd-name">Администратор</div>
+                <div class="user-dd-email">admin@megaprice.kz</div>
+              </div>
+            </div>
+            <div class="user-dd-menu">
+              <button class="user-dd-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Мой профиль
+              </button>
+              <button class="user-dd-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Настройки аккаунта
+              </button>
+              <div class="user-dd-sep"></div>
+              <button class="user-dd-item danger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Выйти
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="page-title">Обзор</h1>
+          <div class="breadcrumb">
+            <span class="bc">MegaPrice</span>
+            <span class="bc-sep">/</span>
+            <span class="bc cur" id="page-bc">Обзор</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Экспорт
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить
+          </button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-label">Заказы сегодня</div><div class="stat-val">1 248</div><div class="stat-sub">↑ 12% за неделю</div></div>
+        <div class="stat-card"><div class="stat-label">Активные аптеки</div><div class="stat-val">342</div><div class="stat-sub">↑ 4 новых</div></div>
+        <div class="stat-card"><div class="stat-label">В процессе</div><div class="stat-val">87</div><div class="stat-sub" style="color:var(--yellow-500)">→ Без изменений</div></div>
+        <div class="stat-card"><div class="stat-label">Выручка</div><div class="stat-val">₸ 4.2M</div><div class="stat-sub">↑ 8% к прошлой неделе</div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  var app = document.getElementById('app');
+  var labels = { overview:'Обзор', purchase:'Закупка', orders:'Заказы', pharmacies:'Аптеки', reports:'Отчеты' };
+
+  // Гамбургер: скрыть/показать правую панель
+  function togglePanel() {
+    app.classList.toggle('panel-hidden');
+  }
+
+  // Переключить раздел
+  // hasSubs=true  → открыть панель с подразделами
+  // hasSubs=false → скрыть панель, сразу на страницу
+  function goSection(id, hasSubs, btn) {
+    // Активная иконка
+    document.querySelectorAll('.rail-item').forEach(function(el){ el.classList.remove('active'); });
+    btn.classList.add('active');
+
+    if (hasSubs) {
+      // Показать панель
+      app.classList.remove('panel-hidden');
+      // Переключить содержимое панели
+      ['purchase','orders'].forEach(function(s){
+        document.getElementById('nav-'+s).style.display = s===id ? '' : 'none';
+      });
+      // Сбросить активный пункт, выделить первый
+      document.querySelectorAll('.panel-item').forEach(function(el){ el.classList.remove('active'); });
+      var first = document.querySelector('#nav-'+id+' .panel-item');
+      if (first) first.classList.add('active');
+    } else {
+      // Скрыть панель — прямая навигация
+      app.classList.add('panel-hidden');
+    }
+
+    // Заголовок страницы
+    document.getElementById('page-title').textContent = labels[id];
+    document.getElementById('page-bc').textContent    = labels[id];
+  }
+
+  function setActive(el, e) {
+    e.preventDefault();
+    document.querySelectorAll('.panel-item').forEach(function(i){ i.classList.remove('active'); });
+    el.classList.add('active');
+  }
+
+  // Аватар dropdown
+  function toggleDD() { document.getElementById('user-dd').classList.toggle('open'); }
+  document.addEventListener('click', function(e){
+    if (!document.querySelector('.hdr-user').contains(e.target)){
+      document.getElementById('user-dd').classList.remove('open');
+    }
+  });
+
+  // Язык
+  var langs=['RU','KZ','EN'], li=0;
+  function cycleLang(btn){ li=(li+1)%langs.length; btn.querySelector('.lang-txt').textContent=langs[li]; }
+
+  // ⌘K
+  document.addEventListener('keydown',function(e){
+    if((e.metaKey||e.ctrlKey)&&e.key==='k'){ e.preventDefault(); document.getElementById('srch').focus(); }
+  });
+</script>
+</body>
+</html>
