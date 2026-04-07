@@ -1,0 +1,12 @@
+.sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; width: var(--rail-w); }
+.sidebar-rail { width: var(--rail-w); height: 100%; background: var(--black); display: flex; flex-direction: column; align-items: center; padding: var(--sp-4) 0; gap: 2px; }
+.rail-logo { width: 32px; height: 32px; background: var(--white); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--black); margin-bottom: var(--sp-4); flex-shrink: 0; letter-spacing: -.02em; }
+.rail-item { width: 52px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: var(--sp-2) var(--sp-1); border-radius: var(--radius-sm); color: var(--gray-500); border: none; background: transparent; transition: color var(--tr); cursor: pointer; }
+.rail-item:hover { color: var(--gray-300); }
+.rail-item.active { color: var(--black); }
+.rail-icon-wrap { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); transition: background var(--tr); }
+.rail-item.active .rail-icon-wrap { background: var(--white); }
+.rail-item:not(.active):hover .rail-icon-wrap { background: rgba(255,255,255,.08); color: var(--white); }
+.rail-icon-wrap svg { width: 1.125rem; height: 1.125rem; }
+.rail-label { font-size: 10px; font-weight: 500; line-height: 1; color: inherit; }
+.rail-item.active .rail-label { color: var(--gray-400); }

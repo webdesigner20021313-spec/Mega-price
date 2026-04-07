@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Корзина — MegaPrice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --font: 'Inter', -apple-system, sans-serif;
+      --white:      #FFFFFF;
+      --black:      #111111;
+      --gray-50:    #F9FAFB;
+      --gray-100:   #F3F4F6;
+      --gray-200:   #E5E7EB;
+      --gray-300:   #D1D5DB;
+      --gray-400:   #9CA3AF;
+      --gray-500:   #6B7280;
+      --gray-600:   #4B5563;
+      --gray-800:   #1F2937;
+      --gray-900:   #111827;
+      --blue-100:   #DBEAFE;
+      --blue-500:   #3B82F6;
+      --blue-600:   #2563EB;
+      --blue-700:   #1D4ED8;
+      --green-100:  #DCFCE7;
+      --green-500:  #22C55E;
+      --green-600:  #16A34A;
+      --red-100:    #FEE2E2;
+      --red-600:    #DC2626;
+      --yellow-100: #FEF9C3;
+      --yellow-500: #F59E0B;
+      --bg-page:    var(--gray-50);
+      --border:     var(--gray-200);
+      --text-primary:   var(--gray-900);
+      --text-secondary: var(--gray-500);
+      --text-muted:     var(--gray-400);
+      --sp-1:.25rem; --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem;
+      --sp-5:1.25rem; --sp-6:1.5rem; --sp-8:2rem;
+      --text-xs:.75rem; --text-sm:.875rem; --text-base:1rem;
+      --radius-sm:0.375rem; --radius-md:0.5rem; --radius-lg:0.75rem;
+      --radius-full:9999px;
+      --tr:150ms ease;
+      --rail-w:68px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { font-family: var(--font); font-size: var(--text-sm); background: var(--bg-page); color: var(--text-primary); -webkit-font-smoothing: antialiased; line-height: 1.5; overflow: hidden; height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--font); cursor: pointer; background: none; border: none; }
+
+    /* SHELL */
+    .app { display: flex; height: 100vh; overflow: hidden; }
+    .main-area { margin-left: var(--rail-w); flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; min-width: 0; }
+
+    /* RAIL */
+    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; width: var(--rail-w); }
+    .sidebar-rail { width: var(--rail-w); height: 100%; background: var(--black); display: flex; flex-direction: column; align-items: center; padding: var(--sp-4) 0; gap: 2px; }
+    .rail-logo { width: 32px; height: 32px; background: var(--white); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--black); margin-bottom: var(--sp-4); flex-shrink: 0; letter-spacing: -.02em; }
+    .rail-item { width: 52px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: var(--sp-2) var(--sp-1); border-radius: var(--radius-sm); color: var(--gray-500); border: none; background: transparent; transition: color var(--tr); cursor: pointer; }
+    .rail-item:hover { color: var(--gray-300); }
+    .rail-item.active { color: var(--black); }
+    .rail-icon-wrap { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); transition: background var(--tr); }
+    .rail-item.active .rail-icon-wrap { background: var(--white); }
+    .rail-item:not(.active):hover .rail-icon-wrap { background: rgba(255,255,255,.08); color: var(--white); }
+    .rail-icon-wrap svg { width: 1.125rem; height: 1.125rem; }
+    .rail-label { font-size: 10px; font-weight: 500; line-height: 1; color: inherit; }
+    .rail-item.active .rail-label { color: var(--gray-400); }
+
+    /* HEADER */
+    .header { height: 60px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: var(--sp-4); padding: 0 var(--sp-6); flex-shrink: 0; }
+    .btn-back { display: inline-flex; align-items: center; gap: var(--sp-2); height: 2rem; padding: 0 var(--sp-3); border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500; transition: all var(--tr); }
+    .btn-back:hover { background: var(--gray-50); color: var(--text-primary); }
+    .btn-back svg { width: .875rem; height: .875rem; pointer-events: none; }
+    .header-title { font-size: var(--text-base); font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; }
+    .header-badge { font-size: var(--text-xs); font-weight: 600; padding: 2px 8px; background: var(--gray-100); color: var(--text-secondary); border-radius: var(--radius-full); }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: var(--sp-2); }
+    .hdr-btn { width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); color: var(--text-secondary); transition: all var(--tr); }
+    .hdr-btn:hover { background: var(--gray-50); color: var(--text-primary); }
+    .hdr-btn svg { width: 1rem; height: 1rem; }
+    .hdr-avatar { width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; color: var(--gray-600); border: 2px solid var(--gray-200); cursor: pointer; }
+
+    /* BODY */
+    .cart-body { flex: 1; display: flex; overflow: hidden; }
+
+    /* ── LEFT: pharmacy list ── */
+    .pharm-panel {
+      width: 240px; flex-shrink: 0;
+      background: var(--white); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .pharm-panel-head {
+      height: 48px; padding: 0 var(--sp-4);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .pharm-panel-label { font-size: var(--text-xs); font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+    .pharm-list { flex: 1; overflow-y: auto; padding: var(--sp-2); display: flex; flex-direction: column; gap: 2px; }
+    .pharm-item {
+      padding: var(--sp-3); border-radius: var(--radius-md);
+      cursor: pointer; transition: background var(--tr);
+      border: 1px solid transparent; position: relative;
+    }
+    .pharm-item:hover { background: var(--gray-50); }
+    .pharm-item.active { background: var(--gray-50); border-color: var(--border); }
+    .pharm-item.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 60%; width: 3px; background: var(--black); border-radius: 0 2px 2px 0; }
+    .pharm-item-name { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); line-height: 1.3; margin-bottom: 2px; }
+    .pharm-item-addr { font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--sp-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pharm-item-stats { display: flex; align-items: center; justify-content: space-between; }
+    .pharm-item-count { font-size: var(--text-xs); color: var(--text-secondary); }
+    .pharm-item-total { font-size: var(--text-xs); font-weight: 600; color: var(--text-primary); }
+    .pharm-item-empty { font-size: var(--text-xs); color: var(--text-muted); font-style: italic; }
+    .pharm-add-btn { margin: var(--sp-2); padding: var(--sp-3); border: 1px dashed var(--border); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--sp-2); font-size: var(--text-xs); color: var(--text-muted); cursor: pointer; transition: all var(--tr); background: none; width: calc(100% - var(--sp-4)); }
+    .pharm-add-btn:hover { border-color: var(--gray-400); color: var(--text-secondary); }
+    .pharm-add-btn svg { width: .875rem; height: .875rem; pointer-events: none; }
+
+    /* ── CENTER: items ── */
+    .cart-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+    .cart-main-head {
+      height: 48px; padding: 0 var(--sp-5);
+      background: var(--white); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0;
+    }
+    .cart-main-pharm { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .cart-main-addr { font-size: var(--text-xs); color: var(--text-muted); }
+    .cart-main-sep { width: 1px; height: 1.25rem; background: var(--border); }
+    .cart-main-meta { font-size: var(--text-xs); color: var(--text-secondary); }
+    .cart-main-actions { margin-left: auto; display: flex; align-items: center; gap: var(--sp-2); }
+    .btn-sm-outline { display: inline-flex; align-items: center; gap: var(--sp-1); height: 1.875rem; padding: 0 var(--sp-3); background: var(--white); color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 500; cursor: pointer; transition: all var(--tr); white-space: nowrap; }
+    .btn-sm-outline:hover { background: var(--gray-50); color: var(--text-primary); }
+    .btn-sm-outline svg { width: .75rem; height: .75rem; pointer-events: none; }
+
+    .cart-scroll { flex: 1; overflow-y: auto; }
+
+    /* Distributor group */
+    .dist-group { border-bottom: 1px solid var(--border); }
+    .dist-header {
+      position: sticky; top: 0; z-index: 2;
+      background: var(--gray-50); border-bottom: 1px solid var(--border);
+      padding: var(--sp-2) var(--sp-5);
+      display: flex; align-items: center; gap: var(--sp-3);
+    }
+    .dist-icon { width: 28px; height: 28px; background: var(--gray-200); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dist-icon svg { width: .875rem; height: .875rem; color: var(--gray-600); }
+    .dist-name { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .dist-city { font-size: var(--text-xs); color: var(--text-muted); }
+    .dist-count { font-size: var(--text-xs); color: var(--text-secondary); background: var(--gray-200); padding: 1px 6px; border-radius: var(--radius-full); }
+    .dist-subtotal { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-left: auto; }
+    .dist-send-btn { display: inline-flex; align-items: center; gap: 4px; height: 1.75rem; padding: 0 var(--sp-3); background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all var(--tr); white-space: nowrap; }
+    .dist-send-btn:hover { border-color: var(--black); color: var(--black); }
+    .dist-send-btn svg { width: .75rem; height: .75rem; pointer-events: none; }
+
+    /* Items table */
+    .items-table { width: 100%; border-collapse: collapse; }
+    .items-table th { font-size: var(--text-xs); font-weight: 600; color: var(--text-muted); text-align: left; padding: var(--sp-2) var(--sp-4); background: var(--white); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .items-table td { padding: var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--gray-100); vertical-align: middle; background: var(--white); }
+    .items-table tbody tr:last-child td { border-bottom: none; }
+    .items-table tbody tr:hover td { background: var(--gray-50); }
+    .row-num { font-size: var(--text-xs); color: var(--text-muted); width: 28px; text-align: right; }
+    .item-name { font-size: var(--text-sm); font-weight: 500; color: var(--text-primary); line-height: 1.35; }
+    .item-mfr { font-size: var(--text-xs); color: var(--text-muted); margin-top: 1px; }
+    .pay-badge { display: inline-flex; padding: 2px 7px; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 500; background: var(--gray-100); color: var(--text-secondary); white-space: nowrap; }
+    .price-cell { font-size: var(--text-sm); font-weight: 500; color: var(--text-primary); white-space: nowrap; }
+    .total-cell { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+    .qty-ctrl { display: flex; align-items: center; gap: 4px; }
+    .qty-btn { width: 1.625rem; height: 1.625rem; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); color: var(--text-secondary); font-size: .9375rem; line-height: 1; transition: all var(--tr); cursor: pointer; flex-shrink: 0; }
+    .qty-btn:hover { border-color: var(--gray-400); color: var(--text-primary); }
+    .qty-input { width: 2.5rem; height: 1.625rem; text-align: center; font-family: var(--font); font-size: var(--text-sm); font-weight: 500; border: 1px solid var(--blue-500); border-radius: var(--radius-sm); outline: none; color: var(--blue-700); background: var(--blue-100); }
+    .del-btn { width: 1.625rem; height: 1.625rem; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); color: var(--text-muted); transition: all var(--tr); cursor: pointer; border: none; background: none; }
+    .del-btn:hover { background: var(--red-100); color: var(--red-600); }
+    .del-btn svg { width: .8125rem; height: .8125rem; pointer-events: none; }
+
+    /* Empty per pharmacy */
+    .pharm-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-3); flex: 1; padding: var(--sp-8); text-align: center; }
+    .pharm-empty svg { width: 2.5rem; height: 2.5rem; color: var(--gray-300); }
+    .pharm-empty-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .pharm-empty-desc { font-size: var(--text-sm); color: var(--text-muted); max-width: 240px; line-height: 1.6; }
+    .btn-add-items { display: inline-flex; align-items: center; gap: var(--sp-2); height: 2.25rem; padding: 0 var(--sp-4); background: var(--black); color: var(--white); border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 500; border: none; cursor: pointer; transition: background var(--tr); }
+    .btn-add-items:hover { background: var(--gray-800); }
+
+    /* ── RIGHT: summary ── */
+    .cart-summary { width: 260px; flex-shrink: 0; background: var(--white); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    .summary-head { height: 48px; padding: 0 var(--sp-5); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+    .summary-head-title { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .summary-body { flex: 1; overflow-y: auto; padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-3); }
+    .s-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); }
+    .s-label { font-size: var(--text-xs); color: var(--text-secondary); }
+    .s-val { font-size: var(--text-sm); font-weight: 500; color: var(--text-primary); white-space: nowrap; }
+    .s-sep { height: 1px; background: var(--border); }
+    .s-pharm-block { background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--sp-3); display: flex; flex-direction: column; gap: 6px; }
+    .s-pharm-name { font-size: var(--text-xs); font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .s-pharm-detail { font-size: var(--text-xs); color: var(--text-muted); }
+    .s-pharm-amount { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .s-total-label { font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); }
+    .s-total-val { font-size: var(--text-base); font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+    .summary-footer { padding: var(--sp-4) var(--sp-5); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: var(--sp-2); }
+    .btn-submit { width: 100%; height: 2.5rem; background: var(--black); color: var(--white); border: none; border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-sm); font-weight: 600; cursor: pointer; transition: background var(--tr); display: flex; align-items: center; justify-content: center; gap: var(--sp-2); }
+    .btn-submit:hover { background: var(--gray-800); }
+    .btn-submit svg { width: 1rem; height: 1rem; }
+    .btn-draft { width: 100%; height: 2.25rem; background: var(--white); color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: all var(--tr); }
+    .btn-draft:hover { background: var(--gray-50); color: var(--text-primary); }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gray-300); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- RAIL -->
+  <div class="sidebar">
+    <nav class="sidebar-rail">
+      <div class="rail-logo">MP</div>
+      <button class="rail-item" onclick="window.location.href='/layout/preview.html'" title="Обзор">
+        <div class="rail-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+        <span class="rail-label">Обзор</span>
+      </button>
+      <button class="rail-item active" title="Закупка">
+        <div class="rail-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+        <span class="rail-label">Закупка</span>
+      </button>
+      <button class="rail-item" title="Заказы">
+        <div class="rail-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
+        <span class="rail-label">Заказы</span>
+      </button>
+      <button class="rail-item" title="Аптеки">
+        <div class="rail-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <span class="rail-label">Аптеки</span>
+      </button>
+      <button class="rail-item" title="Отчеты">
+        <div class="rail-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+        <span class="rail-label">Отчеты</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-area">
+
+    <!-- HEADER -->
+    <header class="header">
+      <button class="btn-back" onclick="window.location.href='/sections/purchase/index.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        К закупке
+      </button>
+      <div class="header-title">Корзина</div>
+      <span class="header-badge" id="header-badge">0 позиций</span>
+      <div class="header-right">
+        <button class="hdr-btn" title="Уведомления">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="hdr-user" style="position:relative">
+          <div class="hdr-avatar" onclick="toggleDD()" style="cursor:pointer">АФ</div>
+          <div class="user-dd" id="user-dd" style="display:none;position:absolute;top:calc(100% + 8px);right:0;width:220px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:300;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border)">
+              <div style="width:2.5rem;height:2.5rem;border-radius:9999px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);font-weight:700;color:var(--gray-600)">АФ</div>
+              <div>
+                <div style="font-size:var(--text-sm);font-weight:600">Алишер Фозилов</div>
+                <div style="font-size:var(--text-xs);color:var(--text-muted)">Менеджер закупок</div>
+              </div>
+            </div>
+            <div onclick="location.href='../../auth/login.html'" style="display:flex;align-items:center;gap:12px;padding:10px 16px;font-size:var(--text-sm);color:var(--red-600);cursor:pointer;transition:background var(--tr)" onmouseover="this.style.background='var(--red-100)'" onmouseout="this.style.background='transparent'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:.875rem;height:.875rem;flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Выйти
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- BODY -->
+    <div class="cart-body">
+
+      <!-- LEFT: pharmacy list -->
+      <div class="pharm-panel">
+        <div class="pharm-panel-head">
+          <span class="pharm-panel-label">Аптеки</span>
+        </div>
+        <div class="pharm-list" id="pharm-list"></div>
+        <button class="pharm-add-btn" onclick="window.location.href='/sections/purchase/index.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Добавить товары
+        </button>
+      </div>
+
+      <!-- CENTER: items by distributor -->
+      <div class="cart-main">
+        <div class="cart-main-head">
+          <div>
+            <div class="cart-main-pharm" id="main-pharm-name">—</div>
+            <div class="cart-main-addr" id="main-pharm-addr"></div>
+          </div>
+          <div class="cart-main-sep"></div>
+          <div class="cart-main-meta" id="main-meta"></div>
+          <div class="cart-main-actions">
+            <button class="btn-sm-outline" onclick="clearPharm()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Очистить аптеку
+            </button>
+          </div>
+        </div>
+        <div class="cart-scroll" id="cart-scroll"></div>
+      </div>
+
+      <!-- RIGHT: summary -->
+      <div class="cart-summary">
+        <div class="summary-head">
+          <div class="summary-head-title">Итог заказа</div>
+        </div>
+        <div class="summary-body" id="summary-body"></div>
+        <div class="summary-footer">
+          <button class="btn-submit" onclick="submitAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Отправить все заказы
+          </button>
+          <button class="btn-draft">Сохранить черновик</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+var pharmacies = [
+  { id: 1, name: 'MY PHARMACY',    addr: 'Алматы, ул. Абая 42' },
+  { id: 2, name: 'MY PHARMACY #2', addr: 'Астана, пр. Республики 15' },
+  { id: 3, name: 'MY PHARMACY #3', addr: 'Шымкент, ул. Байтурсынова 7' },
+];
+
+var cartItems = [
+  // Pharmacy 1
+  { id:1, pharmId:1, name:'Виброцил кап. назал. фл.-капельн. 15 мл №1',    mfr:'GSK Consumer Healthcare', supplier:'PARADISE PHARM',       city:'Самарканд', pay:'Договорная', days:'',        price:40000, qty:50  },
+  { id:2, pharmId:1, name:'Вольтарен Эмульгель гель 1% туба 100 г №1',     mfr:'GSK Consumer Healthcare', supplier:'PHARMEX',              city:'Астана',    pay:'30%',        days:'7 дней',  price:29500, qty:200 },
+  { id:3, pharmId:1, name:'Солпадеин Актив табл. шип. 500 мг + 65 мг',     mfr:'GlaxoSmithKline',         supplier:'PHARMEX',              city:'Астана',    pay:'50%',        days:'14 дней', price:8500,  qty:100 },
+  { id:4, pharmId:1, name:'Нурофен для детей суспензия апельсин 200 мл',    mfr:'Reckitt Benckiser',       supplier:'DRUG-PROMOTION',       city:'Ташкент',   pay:'100%',       days:'',        price:12000, qty:80  },
+  // Pharmacy 2
+  { id:5, pharmId:2, name:'Терафлю при гриппе и простуде со вкусом лимона', mfr:'Delpharm Orleans',        supplier:'TURON PHARM INDUSTRY', city:'Фергана',   pay:'50%',        days:'7 дней',  price:22000, qty:120 },
+  { id:6, pharmId:2, name:'Синекод сироп фл. 200 мл №1',                   mfr:'GSK Consumer Healthcare', supplier:'PARADISE PHARM',       city:'Самарканд', pay:'Договорная', days:'',        price:12500, qty:60  },
+  { id:7, pharmId:2, name:'Фенистил гель 0,1% туба 30 г №1',               mfr:'GSK Consumer Healthcare', supplier:'PARADISE PHARM',       city:'Самарканд', pay:'Договорная', days:'',        price:15500, qty:40  },
+];
+
+var activePharmId = 1;
+
+function fmt(n) {
+  return n.toLocaleString('ru-RU') + ' ₸';
+}
+
+function pharmItems(id) {
+  return cartItems.filter(function(i){ return i.pharmId === id; });
+}
+
+function pharmTotal(id) {
+  return pharmItems(id).reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+}
+
+function pharmPositions(id) {
+  return pharmItems(id).length;
+}
+
+function renderPharmList() {
+  var list = document.getElementById('pharm-list');
+  list.innerHTML = pharmacies.map(function(p) {
+    var items = pharmItems(p.id);
+    var total = pharmTotal(p.id);
+    var isActive = p.id === activePharmId;
+    var statsHtml = items.length
+      ? '<div class="pharm-item-stats">' +
+          '<span class="pharm-item-count">' + items.length + ' позиц.</span>' +
+          '<span class="pharm-item-total">' + fmt(total) + '</span>' +
+        '</div>'
+      : '<div class="pharm-item-empty">Нет товаров</div>';
+    return '<div class="pharm-item' + (isActive ? ' active' : '') + '" onclick="selectPharm(' + p.id + ')">' +
+      '<div class="pharm-item-name">' + p.name + '</div>' +
+      '<div class="pharm-item-addr">' + p.addr + '</div>' +
+      statsHtml +
+    '</div>';
+  }).join('');
+}
+
+function renderMain() {
+  var pharm = pharmacies.find(function(p){ return p.id === activePharmId; });
+  document.getElementById('main-pharm-name').textContent = pharm.name;
+  document.getElementById('main-pharm-addr').textContent = pharm.addr;
+
+  var items = pharmItems(activePharmId);
+  var scroll = document.getElementById('cart-scroll');
+
+  if (!items.length) {
+    document.getElementById('main-meta').textContent = 'Нет товаров';
+    scroll.innerHTML =
+      '<div class="pharm-empty">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
+        '<div class="pharm-empty-title">Для этой аптеки нет товаров</div>' +
+        '<div class="pharm-empty-desc">Вернитесь к закупке и выберите нужные товары</div>' +
+        '<button class="btn-add-items" onclick="window.location.href=\'/sections/purchase/index.html\'">К закупке</button>' +
+      '</div>';
+    return;
+  }
+
+  document.getElementById('main-meta').textContent = items.length + ' позиц. · ' + fmt(pharmTotal(activePharmId));
+
+  // Group by distributor
+  var groups = {};
+  var groupOrder = [];
+  items.forEach(function(item) {
+    if (!groups[item.supplier]) {
+      groups[item.supplier] = { city: item.city, pay: item.pay, items: [] };
+      groupOrder.push(item.supplier);
+    }
+    groups[item.supplier].items.push(item);
+  });
+
+  var html = '';
+  groupOrder.forEach(function(suppName) {
+    var g = groups[suppName];
+    var subtotal = g.items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+    var totalQty = g.items.reduce(function(s,i){ return s + i.qty; }, 0);
+
+    html += '<div class="dist-group">' +
+      '<div class="dist-header">' +
+        '<div class="dist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>' +
+        '<div><div class="dist-name">' + suppName + '</div><div class="dist-city">' + g.city + '</div></div>' +
+        '<span class="dist-count">' + g.items.length + ' поз. · ' + totalQty + ' уп.</span>' +
+        '<span class="dist-subtotal">' + fmt(subtotal) + '</span>' +
+        '<button class="dist-send-btn">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>' +
+          'Отправить' +
+        '</button>' +
+      '</div>' +
+      '<table class="items-table">' +
+        '<thead><tr>' +
+          '<th style="width:28px">#</th>' +
+          '<th>ТОВАР</th>' +
+          '<th>ОПЛАТА</th>' +
+          '<th>ЦЕНА С НДС</th>' +
+          '<th>КОЛ-ВО</th>' +
+          '<th>ИТОГО</th>' +
+          '<th style="width:32px"></th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+          g.items.map(function(item, idx) {
+            var globalIdx = cartItems.indexOf(item);
+            var rowTotal = item.price * item.qty;
+            var payStr = item.pay + (item.days ? ' · ' + item.days : '');
+            return '<tr>' +
+              '<td><span class="row-num">' + (idx+1) + '</span></td>' +
+              '<td><div class="item-name">' + item.name + '</div><div class="item-mfr">' + item.mfr + '</div></td>' +
+              '<td><span class="pay-badge">' + payStr + '</span></td>' +
+              '<td><span class="price-cell">' + fmt(item.price) + '</span></td>' +
+              '<td><div class="qty-ctrl">' +
+                '<button class="qty-btn" onclick="chQty(' + globalIdx + ',-1)">−</button>' +
+                '<input class="qty-input" type="text" value="' + item.qty + '" onchange="setQty(' + globalIdx + ',this.value)"/>' +
+                '<button class="qty-btn" onclick="chQty(' + globalIdx + ',1)">+</button>' +
+              '</div></td>' +
+              '<td><span class="total-cell">' + fmt(rowTotal) + '</span></td>' +
+              '<td><button class="del-btn" onclick="removeItem(' + globalIdx + ')" title="Удалить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>' +
+            '</tr>';
+          }).join('') +
+        '</tbody>' +
+      '</table>' +
+    '</div>';
+  });
+
+  scroll.innerHTML = html;
+}
+
+function renderSummary() {
+  var totalPositions = cartItems.length;
+  var grandTotal = cartItems.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+
+  // Header badge
+  document.getElementById('header-badge').textContent = totalPositions + ' позиц.';
+
+  var pharmBlocks = pharmacies.map(function(p) {
+    var items = pharmItems(p.id);
+    if (!items.length) return '';
+    var total = pharmTotal(p.id);
+    var dists = [...new Set(items.map(function(i){ return i.supplier; }))];
+    return '<div class="s-pharm-block">' +
+      '<div class="s-pharm-name">' + p.name + '</div>' +
+      '<div class="s-pharm-detail">' + items.length + ' поз. · ' + dists.length + ' дистриб.</div>' +
+      '<div class="s-pharm-amount">' + fmt(total) + '</div>' +
+    '</div>';
+  }).filter(Boolean).join('');
+
+  var activePharms = pharmacies.filter(function(p){ return pharmItems(p.id).length > 0; });
+  var totalDists = new Set(cartItems.map(function(i){ return i.supplier; })).size;
+  var totalQty = cartItems.reduce(function(s,i){ return s + i.qty; }, 0);
+
+  document.getElementById('summary-body').innerHTML =
+    '<div class="s-row"><span class="s-label">Аптек в заказе</span><span class="s-val">' + activePharms.length + '</span></div>' +
+    '<div class="s-row"><span class="s-label">Дистрибьюторов</span><span class="s-val">' + totalDists + '</span></div>' +
+    '<div class="s-row"><span class="s-label">Позиций</span><span class="s-val">' + totalPositions + '</span></div>' +
+    '<div class="s-row"><span class="s-label">Упаковок</span><span class="s-val">' + totalQty + '</span></div>' +
+    '<div class="s-sep"></div>' +
+    pharmBlocks +
+    '<div class="s-sep"></div>' +
+    '<div class="s-row"><span class="s-total-label">Итого</span><span class="s-total-val">' + fmt(grandTotal) + '</span></div>';
+}
+
+function render() {
+  renderPharmList();
+  renderMain();
+  renderSummary();
+}
+
+function selectPharm(id) {
+  activePharmId = id;
+  render();
+}
+
+function chQty(idx, delta) {
+  cartItems[idx].qty = Math.max(1, cartItems[idx].qty + delta);
+  render();
+}
+
+function setQty(idx, val) {
+  cartItems[idx].qty = Math.max(1, parseInt(val) || 1);
+  render();
+}
+
+function removeItem(idx) {
+  cartItems.splice(idx, 1);
+  render();
+}
+
+function clearPharm() {
+  var items = pharmItems(activePharmId);
+  if (!items.length) return;
+  if (confirm('Очистить все товары для этой аптеки?')) {
+    cartItems = cartItems.filter(function(i){ return i.pharmId !== activePharmId; });
+    render();
+  }
+}
+
+function submitAll() {
+  if (!cartItems.length) { alert('Корзина пуста'); return; }
+  alert('Заказы отправлены всем дистрибьюторам!');
+}
+
+render();
+
+function toggleDD() { document.getElementById('user-dd').style.display = document.getElementById('user-dd').style.display === 'none' ? 'block' : 'none'; }
+document.addEventListener('click', function(e) {
+  var u = document.querySelector('.hdr-user');
+  if (u && !u.contains(e.target)) document.getElementById('user-dd').style.display = 'none';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+.hdr-user { position: relative; }
+.hdr-avatar { width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; color: var(--gray-600); border: 2px solid var(--gray-200); cursor: pointer; transition: border-color var(--tr); }
+.hdr-avatar:hover { border-color: var(--gray-400); }
+.user-dd { position: absolute; top: calc(100% + 8px); right: 0; width: 220px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(0,0,0,.10); z-index: 300; overflow: hidden; }
+.user-dd-top { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4); border-bottom: 1px solid var(--border); }
+.user-dd-av { width: 2.5rem; height: 2.5rem; border-radius: var(--radius-full); background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: var(--text-sm); font-weight: 700; color: var(--gray-600); }
+.user-dd-name { font-size: var(--text-sm); font-weight: 600; }
+.user-dd-role { font-size: var(--text-xs); color: var(--text-muted); }
+.user-dd-item { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); font-size: var(--text-sm); color: var(--text-secondary); transition: background var(--tr); cursor: pointer; }
+.user-dd-item:hover { background: var(--gray-50); color: var(--text-primary); }
+.user-dd-item svg { width: .875rem; height: .875rem; }
+.user-dd-sep { height: 1px; background: var(--border); margin: var(--sp-1) 0; }
+.user-dd-item.danger { color: var(--red-600); }
+.user-dd-item.danger:hover { background: var(--red-100); }

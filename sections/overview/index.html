@@ -1,2 +1,703 @@
-<!-- РАЗДЕЛ: Обзор -->
-<!-- Заполняется при создании раздела -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Обзор — MegaPrice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --font: 'Inter', -apple-system, sans-serif;
+      --white:      #FFFFFF;
+      --black:      #111111;
+      --gray-50:    #F9FAFB;
+      --gray-100:   #F3F4F6;
+      --gray-200:   #E5E7EB;
+      --gray-300:   #D1D5DB;
+      --gray-400:   #9CA3AF;
+      --gray-500:   #6B7280;
+      --gray-600:   #4B5563;
+      --gray-800:   #1F2937;
+      --gray-900:   #111827;
+      --blue-100:   #DBEAFE;
+      --blue-500:   #3B82F6;
+      --blue-600:   #2563EB;
+      --blue-700:   #1D4ED8;
+      --green-100:  #DCFCE7;
+      --green-500:  #22C55E;
+      --green-600:  #16A34A;
+      --red-100:    #FEE2E2;
+      --red-500:    #EF4444;
+      --red-600:    #DC2626;
+      --yellow-100: #FEF9C3;
+      --yellow-500: #F59E0B;
+      --yellow-700: #A16207;
+      --bg-page:    var(--gray-50);
+      --border:     var(--gray-200);
+      --text-primary:   var(--gray-900);
+      --text-secondary: var(--gray-500);
+      --text-muted:     var(--gray-400);
+      --sp-1:.25rem; --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem;
+      --sp-5:1.25rem; --sp-6:1.5rem; --sp-8:2rem;
+      --text-xs:.75rem; --text-sm:.875rem; --text-base:1rem;
+      --text-lg:1.125rem; --text-xl:1.25rem; --text-2xl:1.5rem;
+      --radius-sm:0.375rem; --radius-md:0.5rem; --radius-lg:0.75rem;
+      --radius-full:9999px;
+      --tr:150ms ease;
+      --rail-w:68px;
+      --header-h:60px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { font-family: var(--font); font-size: var(--text-sm); background: var(--bg-page); color: var(--text-primary); -webkit-font-smoothing: antialiased; line-height: 1.5; overflow: hidden; height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--font); cursor: pointer; background: none; border: none; }
+
+    /* APP SHELL */
+    .app { display: flex; height: 100vh; overflow: hidden; }
+    .main-area { margin-left: var(--rail-w); flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR RAIL */
+    .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; width: var(--rail-w); }
+    .sidebar-rail { width: var(--rail-w); height: 100%; background: var(--black); display: flex; flex-direction: column; align-items: center; padding: var(--sp-4) 0; gap: 2px; }
+    .rail-logo { width: 32px; height: 32px; background: var(--white); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--black); margin-bottom: var(--sp-4); flex-shrink: 0; letter-spacing: -.02em; }
+    .rail-item { width: 52px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: var(--sp-2) var(--sp-1); border-radius: var(--radius-sm); color: var(--gray-500); border: none; background: transparent; transition: color var(--tr); cursor: pointer; }
+    .rail-item:hover { color: var(--gray-300); }
+    .rail-item.active { color: var(--black); }
+    .rail-icon-wrap { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); transition: background var(--tr); }
+    .rail-item.active .rail-icon-wrap { background: var(--white); }
+    .rail-item:not(.active):hover .rail-icon-wrap { background: rgba(255,255,255,.08); color: var(--white); }
+    .rail-icon-wrap svg { width: 1.125rem; height: 1.125rem; }
+    .rail-label { font-size: 10px; font-weight: 500; line-height: 1; color: inherit; }
+    .rail-item.active .rail-label { color: var(--gray-400); }
+
+    /* HEADER */
+    .header { height: var(--header-h); background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: var(--sp-4); padding: 0 var(--sp-6); flex-shrink: 0; z-index: 50; }
+    .header-title { font-size: var(--text-base); font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; }
+    .header-date { font-size: var(--text-sm); color: var(--text-secondary); }
+    .header-right { display: flex; align-items: center; gap: var(--sp-2); margin-left: auto; }
+    .header-lang { display: flex; align-items: center; gap: 4px; height: 2rem; padding: 0 var(--sp-3); border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); color: var(--text-secondary); font-size: var(--text-xs); font-weight: 600; letter-spacing: .04em; transition: background var(--tr); }
+    .header-lang:hover { background: var(--gray-50); }
+    .header-lang svg { width: .75rem; height: .75rem; }
+    .hdr-btn { position: relative; width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); color: var(--text-secondary); transition: background var(--tr), color var(--tr); }
+    .hdr-btn:hover { background: var(--gray-50); color: var(--text-primary); }
+    .hdr-btn svg { width: 1rem; height: 1rem; }
+    .hdr-dot { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%; border: 2px solid var(--white); background: var(--yellow-500); }
+    .hdr-user { position: relative; }
+    .hdr-avatar { width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; color: var(--gray-600); border: 2px solid var(--gray-200); cursor: pointer; transition: border-color var(--tr); }
+    .hdr-avatar:hover { border-color: var(--gray-400); }
+    .user-dd { display: none; position: absolute; top: calc(100% + 8px); right: 0; width: 220px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(0,0,0,.10); z-index: 300; overflow: hidden; }
+    .user-dd.open { display: block; }
+    .user-dd-top { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4); border-bottom: 1px solid var(--border); }
+    .user-dd-av { width: 2.5rem; height: 2.5rem; border-radius: var(--radius-full); background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: var(--text-sm); font-weight: 700; color: var(--gray-600); }
+    .user-dd-name { font-size: var(--text-sm); font-weight: 600; }
+    .user-dd-role { font-size: var(--text-xs); color: var(--text-muted); }
+    .user-dd-item { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); font-size: var(--text-sm); color: var(--text-secondary); transition: background var(--tr); cursor: pointer; }
+    .user-dd-item:hover { background: var(--gray-50); color: var(--text-primary); }
+    .user-dd-item svg { width: .875rem; height: .875rem; }
+    .user-dd-sep { height: 1px; background: var(--border); margin: var(--sp-1) 0; }
+    .user-dd-item.danger { color: var(--red-600); }
+    .user-dd-item.danger:hover { background: var(--red-100); }
+
+    /* CONTENT */
+    .content { flex: 1; overflow-y: auto; padding: var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-6); }
+
+    /* PAGE HEADER */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; }
+    .page-hd-left {}
+    .page-hd-title { font-size: var(--text-xl); font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; margin-bottom: 2px; }
+    .page-hd-sub { font-size: var(--text-sm); color: var(--text-secondary); }
+    .btn-primary { display: inline-flex; align-items: center; gap: var(--sp-2); height: 2.25rem; padding: 0 var(--sp-4); border-radius: var(--radius-sm); background: var(--black); color: var(--white); font-size: var(--text-sm); font-weight: 600; transition: opacity var(--tr); }
+    .btn-primary:hover { opacity: .85; }
+    .btn-primary svg { width: .875rem; height: .875rem; }
+
+    /* KPI CARDS */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-4); }
+    .kpi-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-3); }
+    .kpi-top { display: flex; align-items: center; justify-content: space-between; }
+    .kpi-label { font-size: var(--text-xs); font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .06em; }
+    .kpi-icon { width: 2rem; height: 2rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+    .kpi-icon svg { width: 1rem; height: 1rem; }
+    .kpi-icon.blue { background: var(--blue-100); color: var(--blue-600); }
+    .kpi-icon.green { background: var(--green-100); color: var(--green-600); }
+    .kpi-icon.yellow { background: var(--yellow-100); color: var(--yellow-700); }
+    .kpi-icon.red { background: var(--red-100); color: var(--red-600); }
+    .kpi-value { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); letter-spacing: -.03em; line-height: 1; }
+    .kpi-footer { display: flex; align-items: center; gap: var(--sp-2); }
+    .kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-size: var(--text-xs); font-weight: 600; padding: 2px 6px; border-radius: var(--radius-full); }
+    .kpi-delta.up { background: var(--green-100); color: var(--green-600); }
+    .kpi-delta.down { background: var(--red-100); color: var(--red-600); }
+    .kpi-delta svg { width: .625rem; height: .625rem; }
+    .kpi-delta-label { font-size: var(--text-xs); color: var(--text-muted); }
+
+    /* MINI SPARKLINE */
+    .kpi-bar { display: flex; align-items: flex-end; gap: 3px; height: 28px; margin-top: var(--sp-1); }
+    .kpi-bar-col { flex: 1; background: var(--gray-100); border-radius: 2px; transition: background var(--tr); }
+    .kpi-bar-col.active { background: var(--black); }
+    .kpi-bar-col.hi { background: var(--blue-500); }
+
+    /* TWO-COL GRID */
+    .dash-grid { display: grid; grid-template-columns: 1fr 380px; gap: var(--sp-4); }
+
+    /* CARD */
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .card-head { padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); }
+    .card-link { font-size: var(--text-xs); font-weight: 600; color: var(--blue-600); display: flex; align-items: center; gap: 4px; }
+    .card-link:hover { color: var(--blue-700); }
+    .card-link svg { width: .75rem; height: .75rem; }
+
+    /* ORDERS TABLE */
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table th { text-align: left; font-size: var(--text-xs); font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .orders-table td { padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .orders-table tr:hover td { background: var(--gray-50); }
+    .order-id { font-size: var(--text-xs); font-weight: 600; color: var(--text-muted); font-family: monospace; }
+    .order-pharm { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .order-supplier { font-size: var(--text-xs); color: var(--text-muted); }
+    .order-amount { font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+    .order-date { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+
+    /* STATUS BADGE */
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); font-weight: 600; padding: 3px 8px; border-radius: var(--radius-full); white-space: nowrap; }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge.pending { background: var(--yellow-100); color: var(--yellow-700); }
+    .badge.pending::before { background: var(--yellow-500); }
+    .badge.active { background: var(--blue-100); color: var(--blue-600); }
+    .badge.active::before { background: var(--blue-500); }
+    .badge.done { background: var(--green-100); color: var(--green-600); }
+    .badge.done::before { background: var(--green-500); }
+    .badge.issue { background: var(--red-100); color: var(--red-600); }
+    .badge.issue::before { background: var(--red-500); }
+
+    /* PHARMACY LIST */
+    .pharm-list { display: flex; flex-direction: column; }
+    .pharm-row { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--border); transition: background var(--tr); cursor: pointer; }
+    .pharm-row:last-child { border-bottom: none; }
+    .pharm-row:hover { background: var(--gray-50); }
+    .pharm-av { width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 700; color: var(--gray-600); flex-shrink: 0; }
+    .pharm-info { flex: 1; min-width: 0; }
+    .pharm-name { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pharm-addr { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pharm-stat { text-align: right; flex-shrink: 0; }
+    .pharm-stat-val { font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); }
+    .pharm-stat-label { font-size: var(--text-xs); color: var(--text-muted); }
+
+    /* ACTIVITY FEED */
+    .feed-list { display: flex; flex-direction: column; }
+    .feed-item { display: flex; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--border); }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; padding-top: 4px; }
+    .feed-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .feed-line { flex: 1; width: 1px; background: var(--border); margin: 4px 0; min-height: 12px; }
+    .feed-item:last-child .feed-line { display: none; }
+    .feed-body { flex: 1; min-width: 0; }
+    .feed-text { font-size: var(--text-sm); color: var(--text-primary); line-height: 1.4; }
+    .feed-text strong { font-weight: 600; }
+    .feed-time { font-size: var(--text-xs); color: var(--text-muted); margin-top: 3px; }
+
+    /* ALERTS ROW */
+    .alerts-row { display: flex; gap: var(--sp-4); }
+    .alert-card { flex: 1; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-4) var(--sp-5); display: flex; gap: var(--sp-4); align-items: flex-start; }
+    .alert-card.warn { border-left: 3px solid var(--yellow-500); }
+    .alert-card.info { border-left: 3px solid var(--blue-500); }
+    .alert-card.danger { border-left: 3px solid var(--red-500); }
+    .alert-icon { width: 2rem; height: 2rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .alert-icon svg { width: 1rem; height: 1rem; }
+    .alert-icon.warn { background: var(--yellow-100); color: var(--yellow-700); }
+    .alert-icon.info { background: var(--blue-100); color: var(--blue-600); }
+    .alert-icon.danger { background: var(--red-100); color: var(--red-600); }
+    .alert-body { flex: 1; min-width: 0; }
+    .alert-title { font-size: var(--text-sm); font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .alert-desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: 1.4; }
+    .alert-action { font-size: var(--text-xs); font-weight: 600; color: var(--blue-600); margin-top: 6px; display: inline-block; cursor: pointer; }
+    .alert-action:hover { color: var(--blue-700); }
+
+    /* QUICK ACTIONS */
+    .qa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-3); }
+    .qa-btn { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); align-items: flex-start; cursor: pointer; transition: all var(--tr); }
+    .qa-btn:hover { border-color: var(--gray-400); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .qa-btn-icon { width: 2rem; height: 2rem; border-radius: var(--radius-sm); background: var(--gray-100); display: flex; align-items: center; justify-content: center; color: var(--gray-600); }
+    .qa-btn-icon svg { width: 1rem; height: 1rem; }
+    .qa-btn-label { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+    .qa-btn-sub { font-size: var(--text-xs); color: var(--text-muted); }
+
+    /* PROGRESS BAR */
+    .prog-row { display: flex; flex-direction: column; gap: var(--sp-1); padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--border); }
+    .prog-row:last-child { border-bottom: none; }
+    .prog-row-top { display: flex; justify-content: space-between; align-items: center; }
+    .prog-name { font-size: var(--text-sm); color: var(--text-primary); font-weight: 500; }
+    .prog-val { font-size: var(--text-xs); font-weight: 600; color: var(--text-secondary); }
+    .prog-bar { height: 5px; background: var(--gray-100); border-radius: var(--radius-full); overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: var(--radius-full); background: var(--black); }
+    .prog-fill.blue { background: var(--blue-500); }
+    .prog-fill.green { background: var(--green-500); }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR RAIL -->
+  <aside class="sidebar">
+    <nav class="sidebar-rail">
+      <div class="rail-logo">MP</div>
+
+      <!-- Обзор — active -->
+      <button class="rail-item active" onclick="location.href='../overview/index.html'">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <span class="rail-label">Обзор</span>
+      </button>
+
+      <!-- Закупка -->
+      <button class="rail-item" onclick="location.href='../purchase/index.html'">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+        </div>
+        <span class="rail-label">Закупка</span>
+      </button>
+
+      <!-- Заказы -->
+      <button class="rail-item" onclick="location.href='../orders/index.html'">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <span class="rail-label">Заказы</span>
+      </button>
+
+      <!-- Аптеки -->
+      <button class="rail-item" onclick="location.href='../pharmacies/index.html'">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <span class="rail-label">Аптеки</span>
+      </button>
+
+      <!-- Отчеты -->
+      <button class="rail-item" onclick="location.href='../reports/index.html'">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
+        <span class="rail-label">Отчеты</span>
+      </button>
+
+      <!-- Настройки (bottom) -->
+      <div style="flex:1"></div>
+      <button class="rail-item" style="margin-top:auto">
+        <div class="rail-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </div>
+        <span class="rail-label">Настройки</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div>
+        <div class="header-title">Обзор</div>
+      </div>
+      <div class="header-date" id="hdr-date"></div>
+      <div class="header-right">
+        <button class="header-lang" onclick="cycleLang(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span class="lang-txt">RU</span>
+        </button>
+        <button class="hdr-btn">
+          <div class="hdr-dot"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <div class="hdr-user">
+          <div class="hdr-avatar" onclick="toggleDD()">АФ</div>
+          <div class="user-dd" id="user-dd">
+            <div class="user-dd-top">
+              <div class="user-dd-av">АФ</div>
+              <div>
+                <div class="user-dd-name">Алишер Фозилов</div>
+                <div class="user-dd-role">Менеджер закупок</div>
+              </div>
+            </div>
+            <div class="user-dd-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Профиль
+            </div>
+            <div class="user-dd-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Настройки
+            </div>
+            <div class="user-dd-sep"></div>
+            <div class="user-dd-item danger" onclick="location.href='../../auth/login.html'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Выйти
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-hd">
+        <div class="page-hd-left">
+          <div class="page-hd-title">Добро пожаловать, Алишер</div>
+          <div class="page-hd-sub">Вот что происходит в вашей сети аптек сегодня</div>
+        </div>
+        <button class="btn-primary" onclick="location.href='../purchase/index.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Новая закупка
+        </button>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="alerts-row">
+        <div class="alert-card warn">
+          <div class="alert-icon warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="alert-body">
+            <div class="alert-title">3 заказа требуют подтверждения</div>
+            <div class="alert-desc">Заказы от PARADISE PHARM ожидают вашего одобрения более 24 часов</div>
+            <div class="alert-action" onclick="location.href='../orders/index.html'">Перейти к заказам →</div>
+          </div>
+        </div>
+        <div class="alert-card info">
+          <div class="alert-icon info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="alert-body">
+            <div class="alert-title">Новые предложения поставщиков</div>
+            <div class="alert-desc">DRUG-PROMOTION обновил прайс-лист. Доступны акционные позиции.</div>
+            <div class="alert-action" onclick="location.href='../purchase/index.html'">Смотреть предложения →</div>
+          </div>
+        </div>
+        <div class="alert-card danger">
+          <div class="alert-icon danger">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="alert-body">
+            <div class="alert-title">Остаток по 5 позициям критически низкий</div>
+            <div class="alert-desc">Аптека №3 (ул. Навои, 15) — требуется срочная закупка</div>
+            <div class="alert-action" onclick="location.href='../purchase/index.html'">Создать закупку →</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="kpi-grid">
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-label">Закупки в этом месяце</div>
+            <div class="kpi-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+          </div>
+          <div class="kpi-value">84.2M</div>
+          <div class="kpi-bar" id="bar-spend"></div>
+          <div class="kpi-footer">
+            <span class="kpi-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              +12.4%
+            </span>
+            <span class="kpi-delta-label">к прошлому месяцу</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-label">Активных заказов</div>
+            <div class="kpi-icon yellow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+          </div>
+          <div class="kpi-value">18</div>
+          <div class="kpi-bar" id="bar-orders"></div>
+          <div class="kpi-footer">
+            <span class="kpi-delta down">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              −3
+            </span>
+            <span class="kpi-delta-label">к вчерашнему дню</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-label">Аптек в сети</div>
+            <div class="kpi-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+          </div>
+          <div class="kpi-value">12</div>
+          <div class="kpi-bar" id="bar-pharma"></div>
+          <div class="kpi-footer">
+            <span class="kpi-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              +1
+            </span>
+            <span class="kpi-delta-label">новая за месяц</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div class="kpi-label">Поставщиков активных</div>
+            <div class="kpi-icon red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+          </div>
+          <div class="kpi-value">7</div>
+          <div class="kpi-bar" id="bar-supp"></div>
+          <div class="kpi-footer">
+            <span class="kpi-delta-label">из 12 партнёров</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="qa-grid">
+        <button class="qa-btn" onclick="location.href='../purchase/index.html'">
+          <div class="qa-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </div>
+          <div class="qa-btn-label">Новая закупка</div>
+          <div class="qa-btn-sub">Выбрать товары и поставщиков</div>
+        </button>
+        <button class="qa-btn" onclick="location.href='../purchase/cart.html'">
+          <div class="qa-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div class="qa-btn-label">Корзина</div>
+          <div class="qa-btn-sub">Просмотр и отправка заказов</div>
+        </button>
+        <button class="qa-btn" onclick="location.href='../orders/index.html'">
+          <div class="qa-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="qa-btn-label">Заказы</div>
+          <div class="qa-btn-sub">Требуют действий: 3</div>
+        </button>
+        <button class="qa-btn" onclick="location.href='../reports/index.html'">
+          <div class="qa-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div class="qa-btn-label">Отчеты</div>
+          <div class="qa-btn-sub">Аналитика за апрель</div>
+        </button>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="dash-grid">
+
+        <!-- LEFT: Recent orders -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Последние заказы</div>
+            <a class="card-link" href="../orders/index.html">
+              Все заказы
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>АПТЕКА / ПОСТАВЩИК</th>
+                <th>СТАТУС</th>
+                <th>СУММА</th>
+                <th>ДАТА</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- RIGHT: Pharmacies -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Аптеки сети</div>
+            <a class="card-link" href="../pharmacies/index.html">
+              Все
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+          <div class="pharm-list" id="pharm-list"></div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM GRID -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)">
+
+        <!-- Activity -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Активность</div>
+          </div>
+          <div class="feed-list" id="feed-list"></div>
+        </div>
+
+        <!-- Top suppliers -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Топ поставщиков по объёму</div>
+          </div>
+          <div id="supp-list"></div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-area -->
+</div><!-- /app -->
+
+<script>
+// ── Date ──────────────────────────────────────────────
+(function() {
+  var d = new Date();
+  var months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  var days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+  document.getElementById('hdr-date').textContent =
+    days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+})();
+
+// ── KPI Bars ──────────────────────────────────────────
+function renderBar(id, vals, hiIdx) {
+  var max = Math.max.apply(null, vals);
+  document.getElementById(id).innerHTML = vals.map(function(v, i) {
+    var h = Math.round((v / max) * 100);
+    var cls = i === hiIdx ? 'hi' : (i === vals.length - 1 ? 'active' : '');
+    return '<div class="kpi-bar-col ' + cls + '" style="height:' + h + '%"></div>';
+  }).join('');
+}
+renderBar('bar-spend',  [42, 51, 38, 67, 72, 58, 84], 6);
+renderBar('bar-orders', [12, 21, 15, 19, 24, 18, 18], 6);
+renderBar('bar-pharma', [8,  9,  9, 10, 11, 11, 12],  6);
+renderBar('bar-supp',   [5,  6,  5,  6,  7,  7,  7],  6);
+
+// ── Orders ────────────────────────────────────────────
+var orders = [
+  { id:'#ORD-4821', pharm:'Аптека №1 — ул. Амира Темура', supplier:'PARADISE PHARM', amount:'3 240 000 ₸', date:'07.04.2026', status:'pending' },
+  { id:'#ORD-4820', pharm:'Аптека №5 — пр. Мустакиллик',  supplier:'DRUG-PROMOTION',  amount:'1 870 000 ₸', date:'06.04.2026', status:'active'  },
+  { id:'#ORD-4819', pharm:'Аптека №3 — ул. Навои',         supplier:'TURON PHARM',      amount:'980 000 ₸',  date:'06.04.2026', status:'active'  },
+  { id:'#ORD-4818', pharm:'Аптека №7 — ул. Шота Руставели',supplier:'VERONA',           amount:'2 150 000 ₸', date:'05.04.2026', status:'done'   },
+  { id:'#ORD-4817', pharm:'Аптека №2 — пр. Бунёдкор',      supplier:'PHARMA COSMOS',    amount:'560 000 ₸',  date:'05.04.2026', status:'done'   },
+  { id:'#ORD-4816', pharm:'Аптека №9 — ул. Катартол',      supplier:'GRAND PHARM',      amount:'1 320 000 ₸', date:'04.04.2026', status:'issue'  },
+];
+
+var statusLabel = { pending: 'Ожидает', active: 'В доставке', done: 'Завершён', issue: 'Проблема' };
+
+document.getElementById('orders-tbody').innerHTML = orders.map(function(o) {
+  return '<tr onclick="location.href=\'../orders/index.html\'" style="cursor:pointer">' +
+    '<td><div class="order-pharm">' + o.pharm + '</div><div class="order-supplier">' + o.id + ' · ' + o.supplier + '</div></td>' +
+    '<td><span class="badge ' + o.status + '">' + statusLabel[o.status] + '</span></td>' +
+    '<td><div class="order-amount">' + o.amount + '</div></td>' +
+    '<td><div class="order-date">' + o.date + '</div></td>' +
+  '</tr>';
+}).join('');
+
+// ── Pharmacies ────────────────────────────────────────
+var pharmacies = [
+  { initials:'А1', name:'Аптека №1', addr:'ул. Амира Темура, 112', spend:'18.4M', status:'done'    },
+  { initials:'А2', name:'Аптека №2', addr:'пр. Бунёдкор, 54',      spend:'11.2M', status:'done'    },
+  { initials:'А3', name:'Аптека №3', addr:'ул. Навои, 15',          spend:'6.1M',  status:'issue'   },
+  { initials:'А5', name:'Аптека №5', addr:'пр. Мустакиллик, 88',   spend:'14.7M', status:'active'  },
+  { initials:'А7', name:'Аптека №7', addr:'ул. Шота Руставели, 3',  spend:'9.3M',  status:'done'    },
+  { initials:'А9', name:'Аптека №9', addr:'ул. Катартол, 22',       spend:'5.8M',  status:'pending' },
+];
+
+document.getElementById('pharm-list').innerHTML = pharmacies.map(function(p) {
+  return '<div class="pharm-row" onclick="location.href=\'../pharmacies/index.html\'">' +
+    '<div class="pharm-av">' + p.initials + '</div>' +
+    '<div class="pharm-info">' +
+      '<div class="pharm-name">' + p.name + '</div>' +
+      '<div class="pharm-addr">' + p.addr + '</div>' +
+    '</div>' +
+    '<div class="pharm-stat">' +
+      '<div class="pharm-stat-val">' + p.spend + ' ₸</div>' +
+      '<div style="display:flex;justify-content:flex-end;margin-top:3px"><span class="badge ' + p.status + '">' + statusLabel[p.status] + '</span></div>' +
+    '</div>' +
+  '</div>';
+}).join('');
+
+// ── Activity ──────────────────────────────────────────
+var feed = [
+  { dot:'var(--green-500)',  text:'<strong>Заказ #ORD-4818</strong> доставлен в Аптеку №7',       time:'Сегодня, 14:32' },
+  { dot:'var(--blue-500)',   text:'<strong>Алишер</strong> создал новый заказ на 3.2M ₸',         time:'Сегодня, 11:18' },
+  { dot:'var(--yellow-500)', text:'<strong>PARADISE PHARM</strong> прислал обновлённый прайс',   time:'Сегодня, 09:45' },
+  { dot:'var(--red-500)',    text:'Проблема с доставкой в <strong>Аптеку №9</strong>',            time:'Вчера, 18:03'   },
+  { dot:'var(--green-500)',  text:'<strong>Заказ #ORD-4817</strong> доставлен в Аптеку №2',       time:'Вчера, 15:27'   },
+  { dot:'var(--blue-500)',   text:'Добавлена <strong>Аптека №12</strong> — ул. Юнусабад',        time:'05.04.2026'      },
+];
+
+document.getElementById('feed-list').innerHTML = feed.map(function(f) {
+  return '<div class="feed-item">' +
+    '<div class="feed-dot-wrap"><div class="feed-dot" style="background:' + f.dot + '"></div><div class="feed-line"></div></div>' +
+    '<div class="feed-body"><div class="feed-text">' + f.text + '</div><div class="feed-time">' + f.time + '</div></div>' +
+  '</div>';
+}).join('');
+
+// ── Top Suppliers ──────────────────────────────────────
+var suppliers = [
+  { name:'PARADISE PHARM',       city:'Ташкент',    pct: 34 },
+  { name:'DRUG-PROMOTION',        city:'Самарканд',  pct: 22 },
+  { name:'TURON PHARM INDUSTRY', city:'Фергана',    pct: 18 },
+  { name:'PHARMA COSMOS',        city:'Ташкент',    pct: 14 },
+  { name:'VERONA',               city:'Алматы',     pct:  7 },
+  { name:'GRAND PHARM TRADE',    city:'Астана',     pct:  5 },
+];
+
+var colors = ['', 'blue', 'green', '', '', ''];
+document.getElementById('supp-list').innerHTML = suppliers.map(function(s, i) {
+  return '<div class="prog-row">' +
+    '<div class="prog-row-top">' +
+      '<div class="prog-name">' + s.name + ' <span style="font-weight:400;color:var(--text-muted)">· ' + s.city + '</span></div>' +
+      '<div class="prog-val">' + s.pct + '%</div>' +
+    '</div>' +
+    '<div class="prog-bar"><div class="prog-fill ' + (colors[i]||'') + '" style="width:' + s.pct + '%"></div></div>' +
+  '</div>';
+}).join('');
+
+// ── UI ────────────────────────────────────────────────
+function toggleDD() { document.getElementById('user-dd').classList.toggle('open'); }
+document.addEventListener('click', function(e) {
+  var u = document.querySelector('.hdr-user');
+  if (u && !u.contains(e.target)) document.getElementById('user-dd').classList.remove('open');
+});
+
+var langs = ['RU', 'KZ', 'EN'], li = 0;
+function cycleLang(btn) { li = (li + 1) % langs.length; btn.querySelector('.lang-txt').textContent = langs[li]; }
+</script>
+
+</body>
+</html>
